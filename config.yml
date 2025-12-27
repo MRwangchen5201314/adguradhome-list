@@ -1,0 +1,136 @@
+# AdGuard Home Filter Optimizer Configuration
+# AdGuard Home 规则优化器配置
+
+# 优化选项
+optimization:
+  # 移除无效规则（空行、注释、语法错误）
+  remove_invalid: true
+  
+  # 域名收敛：如果父域名已拦截，删除子域名规则
+  # 例如：||example.com^ 存在时，删除 ||ads.example.com^
+  domain_convergence: true
+  
+  # 格式标准化：统一转换为 ||domain^ 格式
+  format_standardize: true
+  
+  # 保留AGH不支持但可能有用的规则（设为false则删除）
+  keep_unsupported: false
+
+# AdGuard Home 兼容性设置
+adguard_home:
+  # 支持的修饰符列表（其他修饰符将被移除）
+  # 基于AGH v0.107+ 支持的修饰符
+  supported_modifiers:
+    - domain        # 限制特定域名
+    - third-party   # 仅第三方请求
+    - important     # 高优先级规则
+    - client        # 限制特定客户端
+    - dnstype       # 限制DNS记录类型
+    - dnsrewrite    # DNS重写
+    - rewrite       # 重写规则
+    - match-case    # 大小写敏感
+    - app           # 应用程序限制（移动端）
+  
+  # 不支持的修饰符（将被移除）
+  unsupported_modifiers:
+    - popup         # 弹窗（AGH不支持）
+    - generichide   # 通用隐藏（AGH不支持）
+    - genericblock  # 通用拦截（AGH不支持）
+    - elemhide      # 元素隐藏（AGH不支持）
+    - jsinject      # JS注入（AGH不支持）
+    - urlblock      # URL拦截（AGH不支持）
+    - content       # 内容类型（AGH不支持）
+    - subdocument   # 子文档（AGH不支持）
+    - stylesheet    # 样式表（AGH不支持）
+    - image         # 图片（AGH不支持）
+    - script        # 脚本（AGH不支持）
+    - xmlhttprequest # AJAX（AGH不支持）
+    - websocket     # WebSocket（AGH不支持）
+    - webrtc        # WebRTC（AGH不支持）
+    - object        # 插件对象（AGH不支持）
+    - media         # 媒体（AGH不支持）
+    - font          # 字体（AGH不支持）
+
+# 输入配置
+input:
+  # 源文件目录
+  source_dir: "sources"
+  
+  # 文件匹配模式
+  file_patterns:
+    - "*.txt"
+    - "*.filters"
+    - "*.list"
+  
+  # 编码设置
+  encoding: "utf-8"
+  
+  # 错误处理
+  errors: "ignore"  # 编码错误时忽略
+
+# 输出配置
+output:
+  # 优化后的规则文件
+  optimized_file: "output/optimized.txt"
+  
+  # 统计信息文件
+  statistics_file: "output/stats.json"
+  
+  # 被移除规则的日志
+  removed_rules_log: "output/removed.log"
+  
+  # 输出文件编码
+  encoding: "utf-8"
+  
+  # 是否在文件头包含统计信息
+  include_stats: true
+  
+  # 是否对规则排序（按字母顺序）
+  sort_rules: true
+
+# 域名收敛设置
+domain_convergence:
+  # 最小域名长度（短于该长度的域名不参与收敛）
+  min_domain_length: 3
+  
+  # 顶级域名白名单（不收敛这些TLD）
+  tld_whitelist:
+    - "com"
+    - "net"
+    - "org"
+    - "edu"
+    - "gov"
+  
+  # 特殊子域名，即使父域名存在也不收敛
+  special_subdomains:
+    - "www"
+    - "m"
+    - "mobile"
+    - "api"
+    - "cdn"
+    - "static"
+    - "img"
+    - "image"
+    - "media"
+
+# 日志设置
+logging:
+  # 日志级别: DEBUG, INFO, WARNING, ERROR
+  level: "INFO"
+  
+  # 是否显示详细进度
+  verbose: true
+  
+  # 是否显示统计报告
+  show_stats: true
+
+# 性能设置
+performance:
+  # 处理大文件时的内存优化
+  chunk_size: 10000  # 每批处理的规则数
+  
+  # 是否使用多进程（当前脚本未实现）
+  multiprocessing: false
+  
+  # 最大规则数限制（0表示无限制）
+  max_rules: 0
