@@ -1,0 +1,38 @@
+name: Optimize AdGuard Home Filters
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # 每天UTC 2点执行（北京时间10点）
+  workflow_dispatch:      # 允许手动触发
+  push:
+    paths:
+      - 'sources/**'      # sources目录变更时触发
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - name: Create output directory
+        run: mkdir -p output
+        
+      - name: Run filter optimizer
+        run: |
+          python3 $GITHUB_WORKSPACE/scripts/optimizer.py
+          
+      - name: Upload optimized filters
+        uses: actions/upload-artifact@v3
+        with:
+          name: optimized-filters
+          path: output/
+          
+      - name: Commit and push results
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add output/
+          git diff --quiet && git diff --staged --quiet || git commit -m "Auto: optimize filters $(date +%Y-%m-%d)"
+          git push
